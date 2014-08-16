@@ -44,6 +44,10 @@
   extern int absPreheatFanSpeed;
   
   extern bool cancel_heatup;
+  
+  #ifdef DISPLAY_DATA_LASTLINE
+        extern unsigned long message_millis;
+  #endif
     
   void lcd_buzz(long duration,uint16_t freq);
   bool lcd_clicked();

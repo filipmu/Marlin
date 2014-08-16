@@ -1685,9 +1685,14 @@
 #define HEATER_1_PIN       -1
 #define HEATER_2_PIN       -1
 #define HEATER_BED_PIN     20  // Bed
-#define FAN_PIN            22  // Fan
-// You may need to change FAN_PIN to 16 because Marlin isn't using fastio.h
-// for the fan and Teensyduino uses a different pin mapping.
+
+// If soft or fast PWM is off then use Teensyduino pin numbering, Marlin
+// fastio pin numbering otherwise
+#ifdef FAN_SOFT_PWM || FAST_PWM_FAN
+	#define FAN_PIN        22  // Fan
+#else
+	#define FAN_PIN        16  // Fan
+#endif
 
 #if MOTHERBOARD == 8  // Teensylu
   #define X_STOP_PIN         13
@@ -1695,12 +1700,42 @@
   #define Z_STOP_PIN         15
   #define TEMP_0_PIN          7  // Extruder / Analog pin numbering
   #define TEMP_BED_PIN        6  // Bed / Analog pin numbering
+  #define SDSS                8
 #else  // Printrboard
   #define X_STOP_PIN         35
   #define Y_STOP_PIN          8
   #define Z_STOP_PIN         36
   #define TEMP_0_PIN          1  // Extruder / Analog pin numbering
   #define TEMP_BED_PIN        0  // Bed / Analog pin numbering
+  #define SDSS                26
+
+	#ifdef ULTRA_LCD
+	  #define BEEPER -1
+	
+	  #define LCD_PINS_RS 9
+	  #define LCD_PINS_ENABLE 8
+	  #define LCD_PINS_D4 7
+	  #define LCD_PINS_D5 6
+	  #define LCD_PINS_D6 5
+	  #define LCD_PINS_D7 4
+	
+	  #define BTN_EN1   16  //fastio
+	  #define BTN_EN2   17  //fastio
+	  #define BTN_ENC   18  //fastio the click
+	
+	  #define BLEN_C 2
+	  #define BLEN_B 1
+	  #define BLEN_A 0
+	
+	  #define SDCARDDETECT -1
+	
+	  //encoder rotation values
+	  #define encrot0 0
+	  #define encrot1 2
+	  #define encrot2 3
+	  #define encrot3 1
+	#endif //ULTRA_LCD
+
   #ifdef FILAMENT_SENSOR
    #define FILWIDTH_PIN        2
   #endif //FILAMENT_SENSOR
@@ -1710,7 +1745,6 @@
 #define TEMP_2_PIN         -1
 
 #define SDPOWER            -1
-#define SDSS                8
 #define LED_PIN            -1
 #define PS_ON_PIN          -1
 #define KILL_PIN           -1

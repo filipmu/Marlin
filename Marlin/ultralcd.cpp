@@ -19,6 +19,10 @@ int absPreheatHotendTemp;
 int absPreheatHPBTemp;
 int absPreheatFanSpeed;
 
+#ifdef DISPLAY_DATA_LASTLINE
+unsigned long message_millis=0;
+#endif
+
 #ifdef ULTIPANEL
 static float manual_feedrate[] = MANUAL_FEEDRATE;
 #endif // ULTIPANEL
@@ -194,6 +198,9 @@ static void lcd_status_screen()
         encoderPosition = 0;
         lcd_quick_feedback();
         lcd_implementation_init(); // to maybe revive the LCD if static electricity killed it.
+#ifdef DISPLAY_DATA_LASTLINE
+        message_millis=millis();  //get message to show up for a while
+#endif
     }
 
 #ifdef ULTIPANEL_FEEDMULTIPLY
@@ -1290,6 +1297,9 @@ void lcd_setstatus(const char* message)
         return;
     strncpy(lcd_status_message, message, LCD_WIDTH);
     lcdDrawUpdate = 2;
+#ifdef DISPLAY_DATA_LASTLINE
+        message_millis=millis();  //get message to show up for a while
+#endif
 }
 void lcd_setstatuspgm(const char* message)
 {
@@ -1297,6 +1307,9 @@ void lcd_setstatuspgm(const char* message)
         return;
     strncpy_P(lcd_status_message, message, LCD_WIDTH);
     lcdDrawUpdate = 2;
+#ifdef DISPLAY_DATA_LASTLINE
+        message_millis=millis();  //get message to show up for a while
+#endif
 }
 void lcd_setalertstatuspgm(const char* message)
 {
