@@ -20,7 +20,7 @@ int absPreheatHPBTemp;
 int absPreheatFanSpeed;
 
 
-#ifdef DISPLAY_DATA_LASTLINE
+#ifdef FILAMENT_LCD_DISPLAY
 unsigned long message_millis=0;
 #endif
 
@@ -201,8 +201,8 @@ static void lcd_status_screen()
         encoderPosition = 0;
         lcd_quick_feedback();
         lcd_implementation_init(); // to maybe revive the LCD if static electricity killed it.
-#ifdef DISPLAY_DATA_LASTLINE
-        message_millis=millis();  //get message to show up for a while
+#ifdef FILAMENT_LCD_DISPLAY
+        message_millis=millis();  //get status message to show up for a while
 #endif
     }
 
@@ -1173,30 +1173,42 @@ void lcd_init()
     lcd_implementation_init();
 
 #ifdef NEWPANEL
-    pinMode(BTN_EN1,INPUT);
-    pinMode(BTN_EN2,INPUT);
+    //pinMode(BTN_EN1,INPUT);
+    SET_INPUT(BTN_EN1);
+    //pinMode(BTN_EN2,INPUT);
+    SET_INPUT(BTN_EN2);
     WRITE(BTN_EN1,HIGH);
     WRITE(BTN_EN2,HIGH);
   #if BTN_ENC > 0
-    pinMode(BTN_ENC,INPUT);
+    //pinMode(BTN_ENC,INPUT);
+    SET_INPUT(BTN_ENC);
     WRITE(BTN_ENC,HIGH);
   #endif
   #ifdef REPRAPWORLD_KEYPAD
-    pinMode(SHIFT_CLK,OUTPUT);
-    pinMode(SHIFT_LD,OUTPUT);
-    pinMode(SHIFT_OUT,INPUT);
+    //pinMode(SHIFT_CLK,OUTPUT);
+    SET_OUTPUT(SHIFT_CLK);
+    //pinMode(SHIFT_LD,OUTPUT);
+    SET_OUTPUT(SHIFT_LD);
+    //pinMode(SHIFT_OUT,INPUT);
+    SET_INPUT(SHIFT_OUT);
     WRITE(SHIFT_OUT,HIGH);
     WRITE(SHIFT_LD,HIGH);
   #endif
 #else  // Not NEWPANEL
   #ifdef SR_LCD_2W_NL // Non latching 2 wire shift register
-     pinMode (SR_DATA_PIN, OUTPUT);
-     pinMode (SR_CLK_PIN, OUTPUT);
+     //pinMode (SR_DATA_PIN, OUTPUT);
+     SET_OUTPUT(SR_DATA_PIN);
+     //pinMode (SR_CLK_PIN, OUTPUT);
+     SET_OUTPUT(SR_CLK_PIN);
   #elif defined(SHIFT_CLK) 
-     pinMode(SHIFT_CLK,OUTPUT);
-     pinMode(SHIFT_LD,OUTPUT);
-     pinMode(SHIFT_EN,OUTPUT);
-     pinMode(SHIFT_OUT,INPUT);
+     //pinMode(SHIFT_CLK,OUTPUT);
+     SET_OUTPUT(SHIFT_CLK);
+     //pinMode(SHIFT_LD,OUTPUT);
+     SET_OUTPUT(SHIFT_LD);
+     //pinMode(SHIFT_EN,OUTPUT);
+     SET_OUTPUT(SHIFT_EN);
+     //pinMode(SHIFT_OUT,INPUT);
+     SET_INPUT(SHIFT_OUT);
      WRITE(SHIFT_OUT,HIGH);
      WRITE(SHIFT_LD,HIGH);
      WRITE(SHIFT_EN,LOW);
@@ -1208,7 +1220,8 @@ void lcd_init()
 #endif//!NEWPANEL
 
 #if defined (SDSUPPORT) && defined(SDCARDDETECT) && (SDCARDDETECT > 0)
-    pinMode(SDCARDDETECT,INPUT);
+    //pinMode(SDCARDDETECT,INPUT);
+    SET_INPUT(SDCARDDETECT);
     WRITE(SDCARDDETECT, HIGH);
     lcd_oldcardstatus = IS_SD_INSERTED;
 #endif//(SDCARDDETECT > 0)
@@ -1330,8 +1343,8 @@ void lcd_setstatus(const char* message)
         return;
     strncpy(lcd_status_message, message, LCD_WIDTH);
     lcdDrawUpdate = 2;
-#ifdef DISPLAY_DATA_LASTLINE
-        message_millis=millis();  //get message to show up for a while
+#ifdef FILAMENT_LCD_DISPLAY
+        message_millis=millis();  //get status message to show up for a while
 #endif
 }
 void lcd_setstatuspgm(const char* message)
@@ -1340,8 +1353,8 @@ void lcd_setstatuspgm(const char* message)
         return;
     strncpy_P(lcd_status_message, message, LCD_WIDTH);
     lcdDrawUpdate = 2;
-#ifdef DISPLAY_DATA_LASTLINE
-        message_millis=millis();  //get message to show up for a while
+#ifdef FILAMENT_LCD_DISPLAY
+        message_millis=millis();  //get status message to show up for a while
 #endif
 }
 void lcd_setalertstatuspgm(const char* message)
@@ -1527,6 +1540,20 @@ char *ftostr32(const float &x)
   conv[4]=(xx/10)%10+'0';
   conv[5]=(xx)%10+'0';
   conv[6]=0;
+  return conv;
+}
+
+//Float to string with 1.23 format
+char *ftostr12ns(const float &x)
+{
+  long xx=x*100;
+  
+  xx=abs(xx);
+  conv[0]=(xx/100)%10+'0';
+  conv[1]='.';
+  conv[2]=(xx/10)%10+'0';
+  conv[3]=(xx)%10+'0';
+  conv[4]=0;
   return conv;
 }
 
