@@ -630,6 +630,15 @@ void manage_heater()
 		     volumetric_multiplier[FILAMENT_SENSOR_EXTRUDER_NUM] = pow((float)(100+measurement_delay[meas_shift_index])/100.0,2);
 		     if (volumetric_multiplier[FILAMENT_SENSOR_EXTRUDER_NUM] <0.01)
 		    	 volumetric_multiplier[FILAMENT_SENSOR_EXTRUDER_NUM]=0.01;
+		     
+		     //This implements a different way to compensate for filament diameter.
+		     //the sensor will affect the speed of the moves of the X,Y,Z axis and not the speed of the extruder motor.
+		     //If the sensor picks up filament with a larger cross sectional area, it will speed up X,Y,Z moves to compensate, rather than reducing the extruder speed
+		     //The code below ensures that extruder motor speed is not affected by the filament sensor
+		     //The idea is that the effect of the volumetric multiplier and the feedmultiply will cancel out so that the extruder motor speed does not change
+		     //There may be a need to implement a one-time update of the calibration at the start of the run, to handle initial filament width differences with what is in the gcode
+		     //But after that, the extruder speed will be constant
+		     feedmultiply = 100.0/volumetric_multiplier[FILAMENT_SENSOR_EXTRUDER_NUM];  
 	}
 #endif
 }
