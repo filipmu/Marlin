@@ -33,9 +33,7 @@ struct pin_map_t {
   uint8_t bit;
 };
 //------------------------------------------------------------------------------
-#if defined(__AVR_ATmega1280__)\
-|| defined(__AVR_ATmega2560__)
-// Mega
+#if defined(__AVR_ATmega1280__) || defined(__AVR_ATmega2560__) // Mega
 
 // Two Wire (aka I2C) ports
 uint8_t const SDA_PIN = 20;  // D1
@@ -43,6 +41,7 @@ uint8_t const SCL_PIN = 21;  // D0
 
 #undef MOSI_PIN
 #undef MISO_PIN
+#undef SCK_PIN
 // SPI port
 uint8_t const SS_PIN = 53;    // B0
 uint8_t const MOSI_PIN = 51;  // B2
@@ -334,9 +333,9 @@ static inline __attribute__((always_inline))
   void setPinMode(uint8_t pin, uint8_t mode) {
   if (__builtin_constant_p(pin) && pin < digitalPinCount) {
     if (mode) {
-      *digitalPinMap[pin].ddr |= 1 << digitalPinMap[pin].bit;
+      *digitalPinMap[pin].ddr |= BIT(digitalPinMap[pin].bit);
     } else {
-      *digitalPinMap[pin].ddr &= ~(1 << digitalPinMap[pin].bit);
+      *digitalPinMap[pin].ddr &= ~BIT(digitalPinMap[pin].bit);
     }
   } else {
     badPinNumber();
@@ -354,9 +353,9 @@ static inline __attribute__((always_inline))
   void fastDigitalWrite(uint8_t pin, uint8_t value) {
   if (__builtin_constant_p(pin) && pin < digitalPinCount) {
     if (value) {
-      *digitalPinMap[pin].port |= 1 << digitalPinMap[pin].bit;
+      *digitalPinMap[pin].port |= BIT(digitalPinMap[pin].bit);
     } else {
-      *digitalPinMap[pin].port &= ~(1 << digitalPinMap[pin].bit);
+      *digitalPinMap[pin].port &= ~BIT(digitalPinMap[pin].bit);
     }
   } else {
     badPinNumber();
